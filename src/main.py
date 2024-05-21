@@ -148,7 +148,8 @@ for epoch in tqdm(range(epochs)) :
     scheduler.step()
     train_loss[epoch] = train_loss[epoch]/369
     val_loss[epoch] = val_loss[epoch]/100
-        
+    
+## save fcn model state every 5 epochs
     if epoch%5 ==0:
         os.path.join(save_dir, f"checkpoint_epoch_{epoch}.pth")
         torch.save(fcn.state_dict(), "fcn8_" + str(epoch) + ".pth")
@@ -199,5 +200,6 @@ plt.grid(True)
 plt.savefig(os.path.join(figure_path, "Pixelwise.png"))
 plt.close()
 
-
-            
+## model save
+model_save_path = os.path.join(save_dir, "model.pt")
+torch.save(fcn, model_save_path)
