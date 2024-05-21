@@ -42,11 +42,13 @@ trans = transforms.Compose([ToFloatTensor(),
 target_trans = transforms.Compose([ToFloatTensor(),
                            transforms.Resize((320, 480),
                            interpolation= InterpolationMode.NEAREST_EXACT)])
-
+## dataset load
 training_data = LoadCamVid("C:/Users/line/Desktop/Segmentation/data/CamVid/class_dict.csv", "C:/Users/line/Desktop/Segmentation/data/CamVid/train_labels", "C:/Users/line/Desktop/Segmentation/data/CamVid/train",
                            transform=trans, target_transform=target_trans, device=device)
 validation_data = LoadCamVid("C:/Users/line/Desktop/Segmentation/data/CamVid/class_dict.csv","C:/Users/line/Desktop/Segmentation/data/CamVid/val_labels", "C:/Users/line/Desktop/Segmentation/data/CamVid/val",
                              transform= trans, target_transform=target_trans, device=device)
+
+## config result save path
 save_dir = "./results/pth"
 os.makedirs(save_dir, exist_ok=True)
 
@@ -154,6 +156,48 @@ for epoch in tqdm(range(epochs)) :
     print(f"Learning Rate : {optim.param_groups[0]['lr']}")
     print(f"epoch : {epoch_cnt[epoch]}, training_loss : {train_loss[epoch]}, validation_loss : {val_loss[epoch]}")
         
-                
-        
+## figure graphs
+
+
+figure_path = save_dir + "Figure"
+os.makedirs(figure_path, exist_ok=True)
+
+for index, (key, values) in enumerate(layer_wise_gradient.items()):
+    plt.plot(values, label=key)
+plt.xlabel("X-axis")
+plt.ylabel("Y-axis")
+plt.title("LineGraph for each key")
+plt.legend()
+plt.savefig(os.path.join(figure_path, "linegraph.png"))
+plt.close()
+
+plt.plot(epoch_cnt, train_loss, label="train_loss")
+plt.plot(epoch_cnt, val_loss, label="val_loss")
+plt.title("Training Loss over Epochs")
+plt.legend()
+plt.xlabel("Epochs")
+plt.ylabel("Loss")
+plt.grid(True)
+plt.savefig(os.path.join(figure_path, "TrainingLoss.png"))
+plt.close()
+
+plt.plot(epoch_cnt, val_iou, label="val_iou")
+plt.title("IOU over Epochs")
+plt.legend()
+plt.xlabel("Epochs")
+plt.ylabel("IOU")
+plt.grid(True)
+plt.savefig(os.path.join(figure_path, "IOU.png"))
+plt.close()
+
+plt.plot(epoch_cnt, val_pixelwise_acc, label="val_pixelwise_accuracy")
+plt.title("pixelwise_acc over Epochs")
+plt.legend()
+plt.xlabel("Epochs")
+plt.ylabel("pixelwise_acc")
+plt.grid(True)
+plt.savefig(os.path.join(figure_path, "Pixelwise.png"))
+plt.close()
+
+
             
